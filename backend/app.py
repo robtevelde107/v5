@@ -1,5 +1,6 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
+import os
 
 app = Flask(__name__)
 CORS(app)
@@ -77,6 +78,20 @@ def trade():
 def status():
     # return number of users and last 50 logs
     return jsonify({'users': len(users), 'logs': logs[-50:]}), 200
+
+# Serve frontend static files
+@app.route('/')
+def serve_index():
+    return send_from_directory(os.path.join(os.path.dirname(__file__), '..', 'frontend'), 'index.html')
+
+@app.route('/<path:ath>')
+def serve_static(path):
+    return send_from_directory(os.path.join(os.path.dirname(__file__), '..', 'frontend'), path)
+
+
+if __name__ == '__main__':
+    # For local development. On PythonAnywhere, use WSGI file.
+    app.run(debug=True, host='0.0.0.0', port=5000)
 
 if __name__ == '__main__':
     # For local development. On PythonAnywhere, use WSGI file.
